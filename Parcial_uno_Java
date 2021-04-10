@@ -1,0 +1,257 @@
+import java.util.Scanner;
+
+public class LlenaPancita {
+	static Scanner sc = new Scanner(System.in, "ISO-8859-1");
+	
+	static boolean hayVentas  = false;
+
+	static String[] clientes  = {"Coma Poco", "Sin Fat No Fit", "Un Gramo Mas", "El Gordo", "La Lonchera"};
+	static String[] productos = {"Consome de pezuna", "Hociquito relleno", "Cabecitas de pollo apando", "Lentejitas rellenas", "Helado de Mazamorra", "Gaseosa de Aguacate"};
+	static int cantidadCliente = cliente.length;
+	static int cantidadProducto = producto.length;
+	static int [][] ventas    = new int[cantidadCliente][cantidadProducto];
+	static double[] precios   = {15000, 28000, 22000, 30000, 1800, 2200};
+		
+	public static void main (String args[]) {
+		int opcion = 0;
+		String entrada = "";
+		
+		do {
+			do {
+
+				System.out.println("1. Registrar producto");
+				System.out.println("2. Compañia que mas productos compra");
+				System.out.println("3. Producto mas vendido");
+				System.out.println("4. Totales en pesos por Producto");
+				System.out.println("5. Cantidad de productos comprados por cliente");
+				System.out.println("6. Cliente que mas compra un producto");
+				System.out.println("7. Total en pesos por la venta de todos los producto");
+				System.out.println("8. Valor en pesos que se dona a caridad");
+				System.out.println("9. Salir");
+				System.out.print("Opcion: ");
+				
+				entrada = sc.nextLine();
+				
+				if (isNumeric(entrada)) {
+					opcion = Integer.parseInt(entrada);
+				} else {
+					System.out.println("ERROR!!! Opcion incorrecta\n");
+				}
+			} while(opcion < 1 || opcion > 9);
+
+			if (opcion >= 2 && opcion <= 8) {
+				if (hayVentas == false) {
+					opcion = 0;
+					System.out.println("\nNo hay ventas registradas");
+				}
+			}
+			
+			switch(opcion) {
+				case 1: Opcion1(); break;
+				case 2: Opcion2(); break;
+				case 3: Opcion3(); break;
+				case 4: Opcion4(); break;
+				case 5: Opcion5(); break;
+				case 6: Opcion6(); break;
+				case 7: Opcion7(); break;
+				case 8: Opcion8(); break;
+			}
+			
+			System.out.println("\n");
+		} while(opcion != 9);
+	}
+	
+	public static void Opcion1() {
+		System.out.println("\n1. Registrar Compras");
+		
+		for(int i = 0; i < clientes.length; i++) {
+			System.out.println("Registrando Compras de " + clientes[i]);
+			
+			for(int j = 0; j < productos.length; j++) {
+				int cantidad = 0;
+				
+				System.out.print("Comprar " + productos[j] + "? (s/n) ");
+				String comprar = sc.nextLine();
+				
+				if (comprar.toLowerCase().equals("s")) {
+					hayVentas = true;
+										
+					do {
+						String entrada;
+						System.out.print("Cantidad: ");
+						entrada = sc.nextLine();
+						
+						if (isNumeric(entrada)) {
+							cantidad = Integer.parseInt(entrada);
+							
+							if (cantidad < 5) {
+								System.out.println("ERROR. Debe adquirir 5 o mas");
+							}
+						} else {
+							System.out.println("ERROR. Cantidad incorrecta\n");
+						}
+					} while(cantidad < 5);
+				}
+				
+				ventas[i][j] = cantidad;
+			}
+		}
+	}
+	
+	public static void Opcion2() {		
+		System.out.println("\n2. Compañia que mas productos compra");
+		
+		int clienteMayor = 0, cantidadMayor = 0;
+		
+		for(int i = 0; i < clientes.length; i++) {
+			int cantidad = 0;
+			
+			for(int j = 0; j < productos.length; j++) {				
+				cantidad += ventas[i][j];
+			}
+			
+			if (cantidad > cantidadMayor) {
+				clienteMayor  = i;
+				cantidadMayor = cantidad;
+			}
+		}
+		
+		System.out.println(clientes[clienteMayor]);
+	}
+	
+	public static void Opcion3() {
+		System.out.println("\n3. Producto mas vendido");
+		
+		int productoMayor = 0, cantidadMayor = 0;
+		int[] cantidades = new int[productos.length];
+		
+		for(int i = 0; i < clientes.length; i++) {			
+			for(int j = 0; j < productos.length; j++) {				
+				cantidades[j] += ventas[i][j];
+			}
+		}
+		
+		for(int i = 0; i < cantidades.length; i++) {			
+			if (cantidades[i] > cantidadMayor) {
+				productoMayor = i;
+				cantidadMayor = cantidades[i];
+			}
+		}
+		
+		System.out.println(productos[productoMayor]);
+	}
+	
+	public static void Opcion4() {
+		System.out.println("\n4. Totales en pesos por Producto");
+		
+		int[] cantidades = new int[productos.length];
+		
+		for(int i = 0; i < clientes.length; i++) {			
+			for(int j = 0; j < productos.length; j++) {				
+				cantidades[j] += ventas[i][j];
+			}
+		}
+		
+		for(int i = 0; i < cantidades.length; i++) {
+			double total = cantidades[i] * precios[i];
+			System.out.println(productos[i] + "  $" + total);
+		}
+	}
+	
+	public static void Opcion5() {
+		System.out.println("\n5. Cantidad de productos comprados por cliente");
+		
+		boolean encontrado = false;
+		
+		System.out.print("Ingrese el cliente a consultar: ");
+		String cliente = sc.nextLine();
+				
+		for(int i = 0; i < clientes.length; i++) {	
+			if (clientes[i].toLowerCase().equals(cliente.toLowerCase())) {
+				encontrado = true;
+				
+				for(int j = 0; j < productos.length; j++) {
+					System.out.println(productos[j] + "  " + ventas[i][j]);				
+				}
+			}
+		}
+		
+		if (encontrado == false) {
+			System.out.println("Cliente no encontrado");
+		}
+	}
+	
+	public static void Opcion6() {
+		System.out.println("\n6. Cliente que mas compra un producto");
+		
+		int indexProducto = -1;
+		
+		System.out.print("Ingrese el producto a consultar: ");
+		String producto = sc.nextLine();
+				
+		for(int i = 0; i < productos.length; i++) {	
+			if (productos[i].toLowerCase().equals(producto.toLowerCase())) {
+				indexProducto = i;				
+			}
+		}
+		
+		if (indexProducto > -1) {
+			int indexCliente = 0, cantidadMayor = 0;
+			
+			for(int i = 0; i < clientes.length; i++) {	
+				if (ventas[i][indexProducto] > cantidadMayor) {
+					indexCliente  = i;
+					cantidadMayor = ventas[i][indexProducto];
+				}
+			}
+			
+			System.out.println(clientes[indexCliente]);
+		} else {
+			System.out.println("Producto no encontrado");
+		}
+	}
+	
+	public static void Opcion7() {
+		System.out.println("\n7. Total en pesos por la venta de todos los producto");
+		
+		double total = 0;
+		
+		for(int i = 0; i < clientes.length; i++) {			
+			for(int j = 0; j < productos.length; j++) {				
+				total += ventas[i][j] * precios[j];
+			}
+		}
+		
+		System.out.println("Total de venta es: $" + total);
+	}
+	
+	public static void Opcion8() {
+		System.out.println("\n8. Valor en pesos que se dona a caridad");
+		
+		double suma = 0, total = 0;
+		
+		for(int i = 0; i < clientes.length; i++) {			
+			for(int j = 0; j < productos.length; j++) {				
+				suma += ventas[i][j] * precios[j];
+			}
+		}
+		
+		total = suma * 0.07;
+		
+		System.out.println("Total donado es de: $" + total);
+	}
+	
+	public static boolean isNumeric(String cadena) {
+        boolean resultado;
+
+        try {
+            Double.parseDouble(cadena);
+            resultado = true;
+        } catch (NumberFormatException excepcion) {
+            resultado = false;
+        }
+
+        return resultado;
+    }
+}
+
